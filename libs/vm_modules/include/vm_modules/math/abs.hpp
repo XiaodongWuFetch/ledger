@@ -29,8 +29,8 @@ namespace vm_modules {
 template <typename T>
 fetch::math::meta::IfIsMath<T, T> Abs(fetch::vm::VM *, T const &a)
 {
-  T x;
-  fetch::math::Abs(a, x);
+  T x = T(a);
+  fetch::math::Abs(x, x);
   return x;
 }
 
