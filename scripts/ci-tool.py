@@ -179,14 +179,13 @@ def build_project(project_root, build_root, options, concurrency):
     # ensure the build directory exists
     os.makedirs(build_root, exist_ok=True)
 
-    # run cmake
     cmd = ['cmake']
 
     # determine if this system has the ninja build system
     if new_build_folder and shutil.which('ninja') is not None:
         cmd += ['-G', 'Ninja']
 
-        # add all the configuration options
+    # add all the configuration options
     cmd += ['-D{}={}'.format(k, v) for k, v in options.items()]
     cmd += [project_root]
 
@@ -233,8 +232,9 @@ def test_project(build_root, include_regex=None, exclude_regex=None):
 
     cmd = [
         ctest_executable,
+        '-T', TEST_NAME,
         '--output-on-failure',
-        '-T', TEST_NAME
+        '--verbose'
     ]
 
     if include_regex is not None:
@@ -242,8 +242,7 @@ def test_project(build_root, include_regex=None, exclude_regex=None):
     if exclude_regex is not None:
         cmd = cmd + ['-LE', str(exclude_regex)]
 
-    env = {"CTEST_OUTPUT_ON_FAILURE": "1"}
-    exit_code = subprocess.call(cmd, cwd=build_root, env=env)
+    exit_code = subprocess.call(cmd, cwd=build_root)
 
     # load the test format
     test_tag_path = os.path.join(build_root, 'Testing', 'TAG')
